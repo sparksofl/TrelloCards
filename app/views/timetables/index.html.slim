@@ -1,0 +1,13 @@
+/ = link_to "Connect to Trello", "https://trello.com/1/authorize?key=dbaf008eabec02f406a5fdd67684780b&name=TrelloCards&expiration=never&response_type=token"
+
+/= @mary.boards.first
+- @user.boards.each do |b|
+	- if b.name == 'Studies'
+		= b.lists.map {|l| l.name}
+
+/- CSV.foreach("/home/mary/Downloads/TimeTable_15_11_2015 (1).csv", :headers => true, :encoding => "windows-1251:utf-8") do |row|
+/	- i = 0
+/	- while i < row[0].size
+/	h4 = row[0][i]
+
+h5 = @theme
