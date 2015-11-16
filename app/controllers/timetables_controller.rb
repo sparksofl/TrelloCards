@@ -4,7 +4,7 @@ require 'date'
 
 class TimetablesController < ApplicationController
 	def index
-		boardName = 'VPS'
+		boardName = 'Studies'
 		username = 'sparksofl'
 		listName = 'Cist Timetable'
 		board_id = 0;
@@ -37,11 +37,12 @@ class TimetablesController < ApplicationController
 
 		list_names = Array.new 
 
-		CSV.foreach("/home/mary/Downloads/TimeTable_16_11_2015 (6).csv", :headers => true, :encoding => "windows-1251:utf-8") do |row|
-			name = row[0].split(/[0-9]{1}/)[0].gsub!(/_|\*/, '').to_s
+		CSV.foreach("/home/mary/Downloads/TimeTable_16_11_2015 (11).csv", :headers => true, :encoding => "windows-1251:utf-8") do |row|
+			name = row[0].split(/[0-9]{1}/)[0]
+			name.gsub!(/_|\*/, '') if (name.include? '_') || (name.include? '*')
 
 
-			type = name.split(//).last(3).join.gsub( /.{1}$/, '' ).to_s
+			type = name.split(//).last(3).join.gsub( /.{1}$/, '' )
 			if type == 'Лк'
 				c_labels = [ :yellow ]
 			elsif type == 'Лб'
@@ -53,11 +54,14 @@ class TimetablesController < ApplicationController
 			#debug
 
 
-			listName = name.gsub( /.{4}$/, '' ).to_s
+			listName = name.gsub( /.{4}$/, '' )
 
 
 			@user.boards.each do |b| 	
-				if b.name == boardName
+				if b.name == boardName && type != 'Лк'
+					if listName == ''
+						next
+					end
 					if !(list_names.include? listName)
 						@ctList = Trello::List.create(name: listName, board_id: b.id)
 						if !(list_names.include? listName)
